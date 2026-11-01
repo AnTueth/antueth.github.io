@@ -1,0 +1,1 @@
+window.ANTU_POSTS = [];
