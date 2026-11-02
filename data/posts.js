@@ -1,10 +1,5 @@
 window.ANTU_POSTS = [
   {
-    "title": "antu",
-    "description": "eth",
-    "instructions": "testing positive ip"
-  },
-  {
     "title": "testing purposes",
     "description": "Testing Something",
     "instructions": "testing positive for this IP"
