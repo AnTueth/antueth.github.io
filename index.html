@@ -119,13 +119,39 @@ body.cursor-ready .cursor-glow{opacity:1}
       if(config.heroImage){document.getElementById('portrait').src=assetPath(config.heroImage)}
       if(config.favicon){document.getElementById('site-favicon').href=assetPath(config.favicon)}
       document.querySelectorAll('[aria-label^="Telegram"]').forEach(a=>{if(config.telegramUrl){a.href=config.telegramUrl;a.target='_blank';a.rel='noopener noreferrer';a.removeAttribute('data-coming');a.setAttribute('aria-label','Telegram')}});
-      const items=Array.isArray(window.ANTU_POSTS)?window.ANTU_POSTS:[], posts=document.getElementById('posts');
-      posts.innerHTML=items.length?items.map((p,i)=>`<article class="post"><h3>${esc(p.title||'Untitled update')}</h3><p>${esc(p.description||'')}</p><button class="post-link" type="button" data-drop="${i}">Join ↗</button></article>`).join(''):'<div class="empty">No airdrop updates yet.</div>';
-      posts.querySelectorAll('[data-drop]').forEach(b=>b.addEventListener('click',()=>openDrop(items[+b.dataset.drop])));
+      let items=Array.isArray(window.ANTU_POSTS)?window.ANTU_POSTS:[], posts=document.getElementById('posts');
+      const renderPosts=()=>{
+        posts.innerHTML=items.length?items.map((p,i)=>`<article class="post"><h3>${esc(p.title||'Untitled update')}</h3><p>${esc(p.description||'')}</p><button class="post-link" type="button" data-drop="${i}">Join ↗</button></article>`).join(''):'<div class="empty">No airdrop updates yet.</div>';
+        posts.querySelectorAll('[data-drop]').forEach(b=>b.addEventListener('click',()=>openDrop(items[+b.dataset.drop])));
+      };
+      renderPosts();
       const dropOv=document.getElementById('drop-overlay'),dropBody=document.getElementById('drop-body');
       const linkify=t=>esc(t).replace(/(https?:\/\/[^\s<]+)/g,'<a href="$1" target="_blank" rel="noopener noreferrer" style="color:var(--ink);text-decoration:underline">$1</a>');
       const openDrop=p=>{if(!p)return;dropBody.innerHTML=`<p class="drop-tag">Airdrop</p><h3>${esc(p.title||'')}</h3><p>${linkify(p.instructions||p.details||p.description||'')}</p>`;dropOv.classList.add('show');document.body.style.overflow='hidden'};
       const closeDrop=()=>{dropOv.classList.remove('show');document.body.style.overflow=''};
+      let refreshBusy=false;
+      const refreshPosts=async()=>{
+        if(refreshBusy||document.visibilityState==='hidden')return;
+        refreshBusy=true;
+        try{
+          const url=new URL('data/posts.js',document.baseURI);url.searchParams.set('v',String(Date.now()));
+          const response=await fetch(url.href,{cache:'no-store',headers:{'Cache-Control':'no-cache'}});
+          if(!response.ok)throw new Error('posts fetch failed');
+          const source=await response.text();
+          const match=source.match(/^\s*window\.ANTU_POSTS\s*=\s*([\s\S]*?)\s*;?\s*$/);
+          if(!match)throw new Error('unexpected posts format');
+          const next=JSON.parse(match[1]);
+          if(!Array.isArray(next))throw new Error('posts data is not a list');
+          if(JSON.stringify(next)!==JSON.stringify(items)){
+            items=next;
+            renderPosts();
+          }
+        }catch(_){/* Keep the last good posts when the network or file is unavailable. */}
+        finally{refreshBusy=false}
+      };
+      refreshPosts();
+      const postsPoll=setInterval(()=>{if(document.visibilityState==='visible')refreshPosts()},30000);
+      document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible')refreshPosts()});
       dropOv.addEventListener('click',e=>{if(e.target===dropOv||e.target.id==='drop-close')closeDrop()});
       addEventListener('keydown',e=>{if(e.key==='Escape')closeDrop()});
       document.getElementById('year').textContent=new Date().getFullYear();
