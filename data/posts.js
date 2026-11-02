@@ -1,5 +1,10 @@
 window.ANTU_POSTS = [
   {
+    "title": "Test Airdrop",
+    "description": "This is a test project.",
+    "instructions": "1. Visit the official website.\n2. Connect your wallet.\n3. Complete the tasks."
+  },
+  {
     "title": "$3,000 REWARD POOL - POTENTIAL AIRDROP",
     "description": "Free to start. Setup takes approximately 5-10 minutes.",
     "instructions": "💰 $3,000 Ambassador Campaign\n\n🪂 Points Campaign\nComplete tasks, earn points, and climb the leaderboard for potential future rewards.\n\nWhat is Nodiens?\nNodiens is a crypto market intelligence platform for tracking market sentiment, trends, and predictions.\n\nHow to Start:\n\n1. Visit: https://app.nodiens.com/invite?referral_code=0G2PQZA5\n2. Sign up and connect your X account.\n3. Complete available tasks.\n4. Earn points and climb the leaderboard.\n5. Copy your referral link and explore the Ambassador Campaign.\n\nTwo campaigns. One ecosystem. Don't miss the opportunity!\n\nLike, Repost, and Share with your friends!"
