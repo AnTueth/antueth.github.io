@@ -1,5 +1,5 @@
 window.ANTU_SITE_CONFIG = {
   "telegramUrl": "",
-  "heroImage": "assets/profile.jpg",
+  "heroImage": "assets/hero-profile.jpg",
   "favicon": "assets/favicon.png"
 };
